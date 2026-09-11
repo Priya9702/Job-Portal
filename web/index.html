@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Job Portal & Resume Matcher — MCA Resume Project</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <!-- ── Top Header Navigation ── -->
+  <header class="header">
+    <div class="header-container">
+      <a href="#" class="brand">
+        <div class="brand-icon">J</div>
+        <div class="brand-text">
+          <h1>AI Job Portal</h1>
+          <p>MCA Resume Project — Java 21 & SQL Backend</p>
+        </div>
+      </a>
+
+      <!-- Role Switcher -->
+      <div class="role-switcher">
+        <button class="role-btn active" id="btn-role-student" onclick="switchRole('student')">
+          <span>👨‍🎓</span> Student / Candidate
+        </button>
+        <button class="role-btn" id="btn-role-recruiter" onclick="switchRole('recruiter')">
+          <span>👔</span> Recruiter Panel
+        </button>
+        <button class="role-btn" id="btn-role-admin" onclick="switchRole('admin')">
+          <span>🛡️</span> Admin Panel
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── Main Content Area ── -->
+  <main class="main-content">
+
+    <!-- 1. STUDENT PANE -->
+    <section id="pane-student" class="panel-pane active">
+      <!-- Hero Banner -->
+      <div class="hero-banner">
+        <div class="hero-text">
+          <h2>Find Ideal Roles & Match Your Resume with AI</h2>
+          <p>Explore high-growth tech positions. Use our integrated AI Resume Matcher to analyze your resume suitability, ATS score, and missing keywords before applying!</p>
+        </div>
+        <div class="hero-stats">
+          <div class="hero-stat-card">
+            <div class="val" id="stat-active-jobs">4</div>
+            <div class="lbl">Active Jobs</div>
+          </div>
+          <div class="hero-stat-card">
+            <div class="val" id="stat-avg-match">88%</div>
+            <div class="lbl">Avg Match Rate</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filter Controls -->
+      <div class="filter-bar">
+        <div class="search-input-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="student-search" placeholder="Search by title, skill, tech stack, or keyword..." oninput="filterStudentJobs()" />
+        </div>
+
+        <select class="filter-select" id="filter-role" onchange="filterStudentJobs()">
+          <option value="All">All Role Categories</option>
+          <option value="Full Stack">Full Stack</option>
+          <option value="Software Engineering">Software Engineering</option>
+          <option value="Data Science & AI">Data Science & AI</option>
+          <option value="DevOps & Cloud">DevOps & Cloud</option>
+          <option value="Product & UI/UX">Product & UI/UX</option>
+        </select>
+
+        <select class="filter-select" id="filter-type" onchange="filterStudentJobs()">
+          <option value="All">All Employment Types</option>
+          <option value="Full-Time">Full-Time</option>
+          <option value="Hybrid">Hybrid</option>
+          <option value="Remote">Remote</option>
+          <option value="Internship">Internship</option>
+        </select>
+
+        <button class="btn btn-secondary" onclick="resetFilters()">Reset Filters</button>
+        <button class="btn btn-primary" onclick="toggleStudentSubTab('my-applications')">📋 My Applications</button>
+      </div>
+
+      <!-- View Selector (Jobs vs Applications) -->
+      <div id="student-jobs-view">
+        <div class="job-grid" id="student-job-grid">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+
+      <div id="student-apps-view" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+          <h3>My Submitted Applications</h3>
+          <button class="btn btn-secondary" onclick="toggleStudentSubTab('jobs')">← Back to Job Search</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Job Title & Company</th>
+                <th>Applied Date</th>
+                <th>AI Match Score</th>
+                <th>ATS Grade</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="student-apps-table">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. RECRUITER PANE -->
+    <section id="pane-recruiter" class="panel-pane">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+        <div>
+          <h2>Recruiter Dashboard</h2>
+          <p style="color: var(--text-muted); font-size: 14px;">Post job openings, review candidate resumes, and analyze AI ATS match scores.</p>
+        </div>
+        <button class="btn btn-primary" onclick="openModal('modal-post-job')">➕ Post New Job</button>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-card">
+          <h4>Posted Jobs</h4>
+          <div class="num" id="rec-total-jobs">4</div>
+        </div>
+        <div class="stat-card">
+          <h4>Total Candidates</h4>
+          <div class="num" id="rec-total-apps">1</div>
+        </div>
+        <div class="stat-card">
+          <h4>Shortlisted Candidates</h4>
+          <div class="num" id="rec-shortlisted">1</div>
+        </div>
+      </div>
+
+      <h3 style="margin-bottom: 14px;">Candidate Applications & ATS Evaluation</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Candidate Name & Role</th>
+              <th>Applied Job</th>
+              <th>AI Match Score</th>
+              <th>ATS Score</th>
+              <th>Applied Date</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="recruiter-apps-table">
+            <!-- Rendered dynamically -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 3. ADMIN PANE -->
+    <section id="pane-admin" class="panel-pane">
+      <div style="margin-bottom: 24px;">
+        <h2>System Administration & Platform Metrics</h2>
+        <p style="color: var(--text-muted); font-size: 14px;">Overview of platform performance, Java 21 REST API server status, and job listings moderation.</p>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-card">
+          <h4>Total Platform Jobs</h4>
+          <div class="num" id="admin-stat-jobs">4</div>
+        </div>
+        <div class="stat-card">
+          <h4>Candidate Applications</h4>
+          <div class="num" id="admin-stat-apps">1</div>
+        </div>
+        <div class="stat-card">
+          <h4>AI Match Analysis Runs</h4>
+          <div class="num" id="admin-stat-ai">39</div>
+        </div>
+        <div class="stat-card">
+          <h4>Backend Architecture</h4>
+          <div class="num" style="font-size: 16px; color: var(--accent-emerald);">Java 21 + SQL</div>
+        </div>
+      </div>
+
+      <h3 style="margin-bottom: 14px;">Platform Job Moderation</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Job ID</th>
+              <th>Title & Company</th>
+              <th>Role Category</th>
+              <th>Posted Date</th>
+              <th>Applicants</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="admin-jobs-table">
+            <!-- Rendered dynamically -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ── MODALS ── -->
+
+  <!-- 1. AI RESUME MATCHER MODAL -->
+  <div class="modal-overlay" id="modal-ai-match">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div>
+          <h3 id="ai-modal-job-title">AI Resume Matcher</h3>
+          <p id="ai-modal-company" style="color: var(--text-muted); font-size: 13px;"></p>
+        </div>
+        <button class="modal-close" onclick="closeModal('modal-ai-match')">✕</button>
+      </div>
+
+      <div id="ai-match-step-input">
+        <label style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 8px;">Paste or Upload Resume Text:</label>
+        <textarea id="ai-resume-input" rows="7" style="width: 100%; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-sm); color: var(--text-main); padding: 12px; font-family: inherit; font-size: 13px; outline: none;" placeholder="Paste resume text or MCA project details here..."></textarea>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 14px;">
+          <button class="btn btn-secondary" onclick="fillSampleMcaResume()">⚡ Fill Sample MCA Resume</button>
+          <button class="btn btn-ai" onclick="runAiAnalysis()">🤖 Run AI Match Analysis</button>
+        </div>
+      </div>
+
+      <div id="ai-match-step-results" style="display: none;">
+        <div class="score-badge-wrap">
+          <div class="score-circle" id="ai-score-circle" style="--score: 85;">
+            <div class="score-inner">
+              <div class="val" id="ai-score-val">85%</div>
+              <div class="grade" id="ai-score-grade">GRADE A</div>
+            </div>
+          </div>
+          <div class="score-info">
+            <h4 id="ai-summary-title">High Candidate Match</h4>
+            <p id="ai-summary-text"></p>
+            <div style="display: flex; gap: 10px; margin-top: 8px;">
+              <span class="badge-status status-shortlisted" id="ai-ats-badge">ATS Score: 88 (Grade A+)</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px;">
+          <div style="background: var(--bg-card); padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+            <h5 style="color: var(--accent-emerald); font-size: 13px; margin-bottom: 8px;">✅ Matched Skills</h5>
+            <div class="job-tags" id="ai-matched-skills"></div>
+          </div>
+          <div style="background: var(--bg-card); padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+            <h5 style="color: var(--accent-rose); font-size: 13px; margin-bottom: 8px;">⚠️ Missing Target Skills</h5>
+            <div class="job-tags" id="ai-missing-skills"></div>
+          </div>
+        </div>
+
+        <div style="background: var(--bg-card); padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--border-color); margin-bottom: 20px;">
+          <h5 style="color: var(--accent-cyan); font-size: 13px; margin-bottom: 8px;">💡 AI Improvement Recommendations</h5>
+          <ul id="ai-improvements-list" style="font-size: 13px; color: var(--text-muted); padding-left: 20px; line-height: 1.6;"></ul>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 10px;">
+          <button class="btn btn-secondary" onclick="backToAiInput()">← Re-analyze</button>
+          <button class="btn btn-primary" onclick="proceedToApply()">Apply for Job Now</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. POST JOB MODAL -->
+  <div class="modal-overlay" id="modal-post-job">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Post a New Job Opening</h3>
+        <button class="modal-close" onclick="closeModal('modal-post-job')">✕</button>
+      </div>
+      <form id="form-post-job" onsubmit="handlePostJob(event)">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 14px;">
+          <div>
+            <label style="font-size: 12px; color: var(--text-muted);">Job Title</label>
+            <input type="text" id="post-title" required class="filter-select" style="width:100%;" placeholder="e.g. Java Backend Developer" />
+          </div>
+          <div>
+            <label style="font-size: 12px; color: var(--text-muted);">Company Name</label>
+            <input type="text" id="post-company" required class="filter-select" style="width:100%;" placeholder="e.g. TechSphere Solutions" />
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 14px;">
+          <div>
+            <label style="font-size: 12px; color: var(--text-muted);">Role Category</label>
+            <select id="post-category" class="filter-select" style="width:100%;">
+              <option value="Software Engineering">Software Engineering</option>
+              <option value="Full Stack">Full Stack</option>
+              <option value="Data Science & AI">Data Science & AI</option>
+              <option value="DevOps & Cloud">DevOps & Cloud</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size: 12px; color: var(--text-muted);">Job Type</label>
+            <select id="post-type" class="filter-select" style="width:100%;">
+              <option value="Full-Time">Full-Time</option>
+              <option value="Hybrid">Hybrid</option>
+              <option value="Remote">Remote</option>
+              <option value="Internship">Internship</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size: 12px; color: var(--text-muted);">Salary Range</label>
+            <input type="text" id="post-salary" required class="filter-select" style="width:100%;" placeholder="₹10,00,000 - ₹16,00,000 / yr" />
+          </div>
+        </div>
+
+        <div style="margin-bottom: 14px;">
+          <label style="font-size: 12px; color: var(--text-muted);">Required Skills (comma separated)</label>
+          <input type="text" id="post-skills" required class="filter-select" style="width:100%;" placeholder="Java, Spring Boot, MySQL, REST API, Git" />
+        </div>
+
+        <div style="margin-bottom: 18px;">
+          <label style="font-size: 12px; color: var(--text-muted);">Job Description</label>
+          <textarea id="post-desc" rows="4" required class="filter-select" style="width:100%;" placeholder="Detailed job summary and requirements..."></textarea>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 10px;">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('modal-post-job')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Publish Job Opening</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
